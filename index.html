@@ -118,8 +118,10 @@
     .trust-item strong{display:block;color:var(--green);font-size:1.02rem;margin-bottom:3px}
     .trust-item span{display:block;color:var(--muted);font-size:.88rem;line-height:1.45}
     .trust-lead{grid-column:1/-1;background:var(--green);color:#fff;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:22px}
+    .trust-lead-copy{display:grid;gap:6px}
     .trust-lead strong{font-family:var(--serif);font-size:clamp(1.45rem,2.5vw,2rem);font-weight:400;line-height:1.1}
-    .trust-lead span{font-size:.86rem;font-weight:700;color:#fff3e9;white-space:nowrap}
+    .trust-lead .aggregate-rating{font-size:.9rem;font-weight:600;color:#fff3e9;line-height:1.4}
+    .trust-lead>span{font-size:.86rem;font-weight:700;color:#fff3e9;white-space:nowrap}
     .rating-line{display:flex;align-items:center;gap:9px;margin-bottom:5px}
     .rating-line .stars{color:var(--brick);letter-spacing:.08em;font-size:1.06rem}
     .rating-line strong{margin:0}
@@ -376,10 +378,10 @@
     <p class="booking-note">Live rates and availability are confirmed in the secure booking calendar.</p>
 
     <div class="trust" aria-label="Booking assurances">
-      <div class="trust-lead"><strong>The same Airbnb-reviewed stays — now book direct.</strong><span>Hosted by the team guests already know</span></div>
+      <div class="trust-lead"><div class="trust-lead-copy"><strong>The same Airbnb-reviewed stays — now book direct.</strong><span class="aggregate-rating">4.9-star average across 604 Airbnb reviews in total across all six stays.</span></div><span>Hosted by the team guests already know</span></div>
       <div class="trust-item">
-        <div class="rating-line"><span class="stars" aria-hidden="true">★</span><strong>4.83 out of 5</strong></div>
-        <span>Cozy Spot rating from 54 verified Airbnb reviews.</span>
+        <div class="rating-line"><span class="stars" aria-hidden="true">★</span><strong>4.81 out of 5</strong></div>
+        <span>Cozy Spot rating from 68 verified Airbnb reviews.</span>
       </div>
       <div class="trust-item"><span class="guest-badge">Airbnb Guest favourite</span><span>Badge earned by Cozy Spot.</span></div>
       <div class="trust-item"><strong>Secure direct booking</strong><span>See live rates, review your stay details, and reserve through secure checkout.</span></div>
