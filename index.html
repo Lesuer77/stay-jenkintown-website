@@ -239,8 +239,14 @@
       .detail-grid{grid-template-columns:1fr;gap:28px}
       .final{padding:70px 20px 80px}
       footer{padding:24px 20px 30px}
-      .mobile-book{display:block;position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--surface);border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom))}
-      .mobile-book .button{width:100%;min-height:50px}
+      .mobile-book{display:block;position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--surface);border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom));box-shadow:0 -8px 24px rgba(21,37,31,.12)}
+      .mobile-book .button{width:100%;min-height:58px;padding:8px 12px;justify-content:flex-start;gap:12px;text-align:left;box-shadow:0 4px 12px rgba(143,50,31,.24)}
+      .mobile-book-icon{width:40px;height:40px;display:grid;place-items:center;flex:0 0 auto;border:1px solid rgba(255,255,255,.45);border-radius:5px;background:rgba(255,255,255,.12)}
+      .mobile-book-icon svg{width:21px;height:21px;stroke:currentColor}
+      .mobile-book-copy{display:grid;gap:1px;line-height:1.1}
+      .mobile-book-copy strong{font-size:.96rem}
+      .mobile-book-copy small{font-size:.72rem;font-weight:500;color:#fff4ef}
+      .mobile-book-arrow{margin-left:auto;font-size:1.35rem;line-height:1}
       .modal-panel{padding:28px 22px}
     }
     @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.button{transition:none}}
@@ -522,7 +528,18 @@
     </div>
   </footer>
 
-  <div class="mobile-book"><a class="button" href="#availability">Check dates &amp; book</a></div>
+  <div class="mobile-book">
+    <a class="button" href="#availability" aria-label="Check live availability and book your stay">
+      <span class="mobile-book-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7 3v3M17 3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z" />
+          <path d="m9 14 2 2 4-4" />
+        </svg>
+      </span>
+      <span class="mobile-book-copy"><strong>Check dates &amp; book</strong><small>Live availability and secure booking</small></span>
+      <span class="mobile-book-arrow" aria-hidden="true">→</span>
+    </a>
+  </div>
 
   <script src="https://app.lodgify.com/portable-search-bar/stable/renderPortableSearchBar.js" defer></script>
   <script>
