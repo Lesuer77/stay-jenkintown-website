@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>1 Bdrm Apt for Perfect Lil Getaway w/Free Parking | Stay Jenkintown</title>
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18477104756"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-18477104756');
+</script>
 <meta name="description" content="1 Bdrm Apt for Perfect Lil Getaway w/Free Parking in Jenkintown, PA. One bedroom. Free parking. Book direct and save.">
 <style>
   :root{--navy:#14263d;--navy2:#0f2034;--gold:#b49a62;--paper:#f3eee4;--ink:#23282d;--line:#e2d9c6}
@@ -83,6 +90,21 @@
 <footer>Stay Jenkintown · Jenkintown, PA · <a href="tel:+12154369177">+1 (215) 436-9177</a> · <a href="/">All six apartments</a></footer>
 <script>
 (function(){var hero=document.getElementById('hero');var ts=document.querySelectorAll('.thumbs img');ts.forEach(function(t,i){t.addEventListener('click',function(){hero.src=t.src;ts.forEach(function(x){x.classList.remove('active')});t.classList.add('active');});});})();
+</script>
+<script>
+  document.addEventListener('click', function (event) {
+    var checkoutLink = event.target.closest('a[href]');
+    if (!checkoutLink || event.defaultPrevented) return;
+    try {
+      var checkoutUrl = new URL(checkoutLink.href, window.location.href);
+      if (checkoutUrl.hostname !== 'checkout.lodgify.com' || checkoutUrl.pathname.indexOf('/reservation') === -1) return;
+    } catch (error) {
+      return;
+    }
+    gtag('event', 'conversion', {
+      send_to: 'AW-18477104756/Nl1fCICPuIcdEPT8yOpE'
+    });
+  });
 </script>
 </body>
 </html>
