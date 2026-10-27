@@ -166,5 +166,78 @@
         }
       });
 </script>
+<style>
+.sj-dates-bar{background:#fffdf8;border:1px solid #d7cfc1;border-radius:8px;padding:16px 18px;margin:18px 0;font-family:inherit;color:#23282d}
+.sj-dates-bar .sj-dates-title{font-weight:700;font-size:1.05rem;margin:0 0 4px}
+.sj-dates-bar .sj-dates-sub{margin:0 0 12px;color:#4d555d}
+.sj-dates-bar .sj-dates-btn{display:inline-block;background:#172b45;color:#fff!important;text-decoration:none;padding:12px 20px;border-radius:4px;font-weight:600}
+.sj-dates-bar .sj-dates-btn:hover{background:#0f2034}
+.sj-dates-bar .sj-dates-note{margin:10px 0 0;font-size:.9rem;color:#4d555d}
+</style>
+<script>
+(function () {
+  var params = new URLSearchParams(window.location.search);
+  function parseDate(v) {
+    if (!v) return null;
+    var iso = '';
+    if (/^\d{4}-\d{2}-\d{2}$/.test(v)) iso = v;
+    else if (/^\d{8}$/.test(v)) iso = v.slice(0, 4) + '-' + v.slice(4, 6) + '-' + v.slice(6, 8);
+    else return null;
+    var d = new Date(iso + 'T12:00:00');
+    if (isNaN(d.getTime())) return null;
+    return { iso: iso, date: d, compact: iso.replace(/-/g, '') };
+  }
+  var arr = parseDate(params.get('arrival'));
+  var dep = parseDate(params.get('departure'));
+  if (!arr || !dep || dep.date <= arr.date) return;
+  var today = new Date(); today.setHours(0, 0, 0, 0);
+  if (new Date(arr.iso + 'T00:00:00') < today) return;
+  var box = document.getElementById('lodgify-book-now-box');
+  if (!box || !box.parentNode) return;
+  var rentalId = box.getAttribute('data-rental-id');
+  if (!rentalId) return;
+  var adults = parseInt(params.get('adults') || params.get('guests') || '1', 10);
+  if (isNaN(adults) || adults < 1) adults = 1;
+  var children = parseInt(params.get('children') || '0', 10) || 0;
+  var infants = parseInt(params.get('infants') || '0', 10) || 0;
+  var pets = parseInt(params.get('pets') || '0', 10) || 0;
+  var currency = (params.get('currency') || 'USD').toUpperCase().replace(/[^A-Z]/g, '') || 'USD';
+  var nights = Math.round((dep.date - arr.date) / 86400000);
+  var fmt = new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+  var guestsTotal = adults + children;
+  var guestText = guestsTotal + (guestsTotal === 1 ? ' guest' : ' guests');
+  var co = new URLSearchParams();
+  co.set('currency', currency);
+  co.set('arrival', arr.compact);
+  co.set('departure', dep.compact);
+  co.set('adults', String(adults));
+  co.set('numberofpeople', String(guestsTotal));
+  if (children) co.set('children', String(children));
+  if (infants) co.set('infants', String(infants));
+  if (pets) co.set('pets', String(pets));
+  var checkoutUrl = 'https://checkout.lodgify.com/en/stayjenkintown/' + rentalId + '/reservation?' + co.toString();
+  var bar = document.createElement('div');
+  bar.className = 'sj-dates-bar';
+  var title = document.createElement('p');
+  title.className = 'sj-dates-title';
+  title.textContent = 'Your dates: ' + fmt.format(arr.date) + ' \u2192 ' + fmt.format(dep.date);
+  var sub = document.createElement('p');
+  sub.className = 'sj-dates-sub';
+  sub.textContent = nights + (nights === 1 ? ' night' : ' nights') + ' \u00B7 ' + guestText + ' \u2014 carried over from your search.';
+  var btn = document.createElement('a');
+  btn.className = 'sj-dates-btn';
+  btn.href = checkoutUrl;
+  btn.textContent = 'Continue to secure checkout';
+  btn.setAttribute('aria-label', 'Continue to secure checkout with your chosen dates');
+  var note = document.createElement('p');
+  note.className = 'sj-dates-note';
+  note.textContent = 'Checkout shows the full price for these dates before you pay. To change dates, use the booking box below.';
+  bar.appendChild(title);
+  bar.appendChild(sub);
+  bar.appendChild(btn);
+  bar.appendChild(note);
+  box.parentNode.insertBefore(bar, box);
+}());
+</script>
 </body>
 </html>

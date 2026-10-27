@@ -787,7 +787,7 @@
       <button class="back-link search-back" id="search-back" type="button">← Back to search</button>
       <div class="search-results-head">
         <h2 id="search-results-title">Choose your Jenkintown apartment</h2>
-        <p id="search-results-summary">Each option opens that exact apartment’s live Lodgify checkout.</p>
+        <p id="search-results-summary">Each option opens that apartment’s booking page.</p>
       </div>
       <div class="search-results-list" id="search-results-list"></div>
     </section>
@@ -1261,12 +1261,27 @@
           return apartment.id === selectedUnitId;
         }) : apartments;
         resultsList.innerHTML = '';
+        var resultQuery = '';
+        if (trip.arrival && trip.departure) {
+          var orderedParams = new URLSearchParams();
+          orderedParams.set('arrival', trip.arrival);
+          orderedParams.set('departure', trip.departure);
+          ['adults', 'guests', 'children', 'infants', 'pets', 'currency', 'coupon'].forEach(function (key) {
+            var value = trip.params.get(key);
+            if (value) orderedParams.set(key, value);
+          });
+          resultQuery = orderedParams.toString();
+        }
         matchingApartments.forEach(function (apartment) {
           var article = document.createElement('article');
           article.className = 'search-result';
 
+          var apartmentHref = resultQuery
+            ? '/jenkintown/' + apartment.slug + '/?' + resultQuery
+            : '/jenkintown/' + apartment.slug + '/';
+
           var imageLink = document.createElement('a');
-          imageLink.href = '/jenkintown/' + apartment.slug + '/';
+          imageLink.href = apartmentHref;
           var image = document.createElement('img');
           image.src = apartment.image;
           image.alt = apartment.title + ' photo 1';
@@ -1286,7 +1301,7 @@
           var link = document.createElement('a');
           link.className = 'button';
           link.textContent = 'See photos & book';
-          link.href = '/jenkintown/' + apartment.slug + '/';
+          link.href = apartmentHref;
           link.setAttribute('aria-label', 'See photos and book ' + apartment.title);
 
           copy.appendChild(description);
@@ -1300,16 +1315,16 @@
         if (selectedUnitId && matchingApartments.length) {
           resultsTitle.textContent = matchingApartments[0].title;
           if (trip.arrival && trip.departure) {
-            resultsSummary.textContent = readableDate(trip.arrival) + ' to ' + readableDate(trip.departure) + '. View this apartment’s live price and availability in its Lodgify checkout.';
+            resultsSummary.textContent = readableDate(trip.arrival) + ' to ' + readableDate(trip.departure) + '. Your dates travel with you — open the apartment and its booking page opens with your dates ready.';
           } else {
-            resultsSummary.textContent = 'View this apartment’s live price and availability in its Lodgify checkout.';
+            resultsSummary.textContent = 'Each option opens that apartment’s booking page.';
           }
         } else {
           resultsTitle.textContent = 'Choose your Jenkintown apartment';
           if (trip.arrival && trip.departure) {
-            resultsSummary.textContent = readableDate(trip.arrival) + ' to ' + readableDate(trip.departure) + '. Each option opens that exact apartment’s live Lodgify checkout for these dates.';
+            resultsSummary.textContent = readableDate(trip.arrival) + ' to ' + readableDate(trip.departure) + '. Your dates travel with you — open an apartment and its booking page opens with your dates ready.';
           } else {
-            resultsSummary.textContent = 'Each option opens that exact apartment’s live Lodgify checkout.';
+            resultsSummary.textContent = 'Each option opens that apartment’s booking page.';
           }
         }
         results.hidden = false;
