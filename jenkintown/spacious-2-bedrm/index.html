@@ -208,8 +208,8 @@
   var guestText = guestsTotal + (guestsTotal === 1 ? ' guest' : ' guests');
   var co = new URLSearchParams();
   co.set('currency', currency);
-  co.set('arrival', arr.compact);
-  co.set('departure', dep.compact);
+  co.set('arrival', arr.iso);
+  co.set('departure', dep.iso);
   co.set('adults', String(adults));
   co.set('numberofpeople', String(guestsTotal));
   if (children) co.set('children', String(children));
