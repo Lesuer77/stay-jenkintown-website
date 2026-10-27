@@ -426,6 +426,7 @@
     .search-result-availability .avail-detail{display:block;color:var(--muted);font-size:.78rem}
     .search-result-availability .avail-checking{display:block;color:var(--muted);font-weight:600}
     .search-result.is-unavailable{opacity:.55}
+    .search-results-empty{grid-column:1/-1;background:var(--surface);padding:26px 22px;margin:0;text-align:center;font-weight:600;color:var(--ink)}
     .final-protection{display:block;margin:14px auto 0;max-width:620px;color:rgba(255,255,255,.88);font-size:.8rem}
     .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
     @media (max-width:900px){
@@ -1260,15 +1261,17 @@
         return { params: query, arrival: arrival, departure: departure };
       }
 
+      var availabilitySearchId = 0;
       function checkAvailabilityForResults(trip, checks) {
         if (!trip.arrival || !trip.departure || !checks.length) return;
+        var searchId = ++availabilitySearchId;
         var adultsValue = parseInt(trip.params.get('adults'), 10);
         if (isNaN(adultsValue) || adultsValue < 1) {
           var guestsValue = parseInt(trip.params.get('guests'), 10);
           adultsValue = (!isNaN(guestsValue) && guestsValue > 0) ? guestsValue : 1;
         }
         var currencyValue = trip.params.get('currency') || 'USD';
-        checks.forEach(function (check) {
+        var checkPromises = checks.map(function (check) {
           var query = new URLSearchParams();
           query.set('arrival', trip.arrival);
           query.set('departure', trip.departure);
@@ -1279,13 +1282,17 @@
             if (!isNaN(extra) && extra > 0) query.set(key, String(extra));
           });
           var url = 'https://checkout.lodgify.com/api/v2/websites/stayjenkintown/rentals/' + encodeURIComponent(check.apartment.id) + '/price?' + query.toString();
-          fetch(url).then(function (response) {
+          return fetch(url).then(function (response) {
             return response.json().then(function (data) {
               return { ok: response.ok, data: data };
             }).catch(function () {
               return { ok: response.ok, data: null };
             });
           }).then(function (result) {
+            if (!result.ok) {
+              if (check.article && check.article.parentNode) check.article.parentNode.removeChild(check.article);
+              return;
+            }
             if (!check.availability || !check.availability.parentNode) return;
             if (result.ok && result.data && result.data.totalPrice && result.data.totalPrice.total !== undefined && result.data.totalPrice.total !== null) {
               var totalNumber = Number(result.data.totalPrice.total);
@@ -1309,20 +1316,6 @@
               totalLine.textContent = 'Total for your stay: ' + formattedTotal;
               check.availability.appendChild(availableStatus);
               check.availability.appendChild(totalLine);
-            } else if (!result.ok) {
-              check.availability.innerHTML = '';
-              var unavailableStatus = document.createElement('span');
-              unavailableStatus.className = 'avail-status';
-              unavailableStatus.textContent = 'Not available for these dates';
-              check.availability.appendChild(unavailableStatus);
-              if (result.data && result.data.detail) {
-                var detailLine = document.createElement('span');
-                detailLine.className = 'avail-detail';
-                detailLine.textContent = result.data.detail;
-                check.availability.appendChild(detailLine);
-              }
-              if (check.link && check.link.parentNode) check.link.parentNode.removeChild(check.link);
-              check.article.classList.add('is-unavailable');
             } else {
               check.availability.parentNode.removeChild(check.availability);
             }
@@ -1330,9 +1323,23 @@
             if (check.availability && check.availability.parentNode) check.availability.parentNode.removeChild(check.availability);
           });
         });
+        Promise.all(checkPromises).then(function () {
+          if (searchId !== availabilitySearchId) return;
+          var remaining = resultsList.querySelectorAll('.search-result').length;
+          if (remaining === 0) {
+            var emptyMessage = document.createElement('p');
+            emptyMessage.className = 'search-results-empty';
+            emptyMessage.textContent = 'No apartments are available for those dates. Please try different dates.';
+            resultsList.appendChild(emptyMessage);
+            resultsSummary.textContent = 'No apartments available for ' + readableDate(trip.arrival) + ' to ' + readableDate(trip.departure) + '.';
+          } else {
+            resultsSummary.textContent = remaining + (remaining === 1 ? ' apartment' : ' apartments') + ' available for ' + readableDate(trip.arrival) + ' to ' + readableDate(trip.departure) + '.';
+          }
+        });
       }
 
       function showNamedResults(sourceUrl) {
+        availabilitySearchId++;
         var trip = bookingQuery(sourceUrl);
         var selectedUnitId = unitSearch.value;
         var matchingApartments = selectedUnitId ? apartments.filter(function (apartment) {
